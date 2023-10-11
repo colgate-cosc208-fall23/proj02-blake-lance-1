@@ -151,7 +151,6 @@ void downwards_grid(struct Blocks **grid){
         }
         
         downwards_column(column);
-        
 
         for (int row = 0; row < 4; row++) {
             grid[row][col].value = column[row];
@@ -170,29 +169,47 @@ int main() {
     //int win = obtained_2048(grid);
     printf("%d\n", flag);
     grid[0][0].value = 4;
-    grid[1][0].value = 0;
-    grid[2][0].value = 4;
+    grid[0][0].filled = 1;
+    grid[1][0].value = 2;
+    grid[1][0].filled = 1;
+    grid[2][0].value = 16;
+    grid[2][0].filled = 1;
     grid[3][0].value = 8;
+    grid[3][0].filled = 1;
 
     grid[0][1].value = 2;
-    grid[1][1].value = 2;
-    grid[2][1].value = 4;
-    grid[3][1].value = 8;
+    grid[0][1].filled = 1;
+    grid[1][1].value = 4;
+    grid[1][1].filled = 1;
+    grid[2][1].value = 32;
+    grid[2][1].filled = 1;
+    grid[3][1].value = 256;
+    grid[3][1].filled = 1;
 
+
+    grid[0][2].value = 16;
+    grid[1][2].value = 32;
+    grid[2][2].value = 64;
+    grid[3][2].value = 128;
+    grid[0][2].filled = 1;
+    grid[1][2].filled = 1;
+    grid[2][2].filled = 1;
+    grid[3][2].filled = 1;
+
+
+    grid[0][3].value = 256;
+    grid[1][3].value = 512;
+    grid[2][3].value = 32;
+    grid[3][3].value = 1024;
+    grid[0][3].filled = 1;
+    grid[1][3].filled = 1;
+    grid[2][3].filled = 1;
+    grid[3][3].filled = 1;
+
+
+    flag = has_valid_moves(grid);
     display_grid(grid);
-
-    upwards_grid(grid);
-
-    display_grid(grid);
-
-    upwards_grid(grid);
-
-    display_grid(grid);
-
-
-    upwards_grid(grid);
-
-    display_grid(grid);
+    printf("%d\n", flag);
 
 
 
