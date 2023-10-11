@@ -114,6 +114,12 @@ void upwards_grid(struct Blocks **grid){
 
         for (int row = 0; row < 4; row++) {
             grid[row][col].value = column[row];
+            if (grid[row][col].value == 0){
+                grid[row][col].filled = 0;
+            }
+            else{
+                grid[row][col].filled = 1;
+            }
         }
         free(column);
     }
@@ -154,10 +160,109 @@ void downwards_grid(struct Blocks **grid){
 
         for (int row = 0; row < 4; row++) {
             grid[row][col].value = column[row];
+            if (grid[row][col].value == 0){
+                grid[row][col].filled = 0;
+            }
+            else{
+                grid[row][col].filled = 1;
+            }
         }
         free(column);
     }
 }
+
+void rightward_row(int row[]){
+    int right_row[4] = {0, 0, 0, 0}; 
+    int idp_idx = 3; 
+
+    for (int i = 3; i >= 0; i--) {
+        if (row[i] == 0) continue;  
+
+        if (right_row[idp_idx] == 0) {
+            right_row[idp_idx] = row[i];  
+        } else if (right_row[idp_idx] == row[i]) {
+            right_row[idp_idx] *= 2;  
+            idp_idx--; 
+            right_row[idp_idx] = 0;  
+        } else {
+            idp_idx--;  
+            right_row[idp_idx] = row[i];  
+        }
+    }
+
+    for (int i = 0; i < 4; i++) {
+        row[i] = right_row[i];
+    }
+}
+
+void rightward_grid(struct Blocks **grid){
+    for (int row = 0; row < 4; row++) {
+        int *rows = malloc(sizeof(int) * 4);
+        for (int col = 0; col < 4; col++) {
+            rows[col] = grid[row][col].value;
+        }
+        
+        rightward_row(rows);
+
+        for (int col = 0; col < 4; col++) {
+            grid[row][col].value = rows[col];
+            if (grid[row][col].value == 0){
+                grid[row][col].filled = 0;
+            }
+            else{
+                grid[row][col].filled = 1;
+            }
+        }
+        free(rows);
+    }
+}
+
+void leftward_row(int row[]){
+    int left_row[4] = {0,0,0,0};
+    int idp_idx = 0;
+    for (int i = 0; i<4; i++){
+        if (row[i] == 0) continue;  
+
+        if (left_row[idp_idx] == 0){
+            left_row[idp_idx] = row[i];
+        }
+        else if (left_row[idp_idx] == row[i]) {
+            left_row[idp_idx] *= 2;
+            idp_idx++;
+        } 
+        else {
+            idp_idx++;
+            left_row[idp_idx] = row[i];
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        row[i] = left_row[i];
+    }
+}
+
+
+void leftwards_grid(struct Blocks **grid){
+    for (int row = 0; row < 4; row++) {
+        int *rows = malloc(sizeof(int) * 4);
+        for (int col = 0; col < 4; col++) {
+            rows[col] = grid[row][col].value;
+        }
+        
+        leftward_row(rows);
+
+        for (int col = 0; col < 4; col++) {
+            grid[row][col].value = rows[col];
+            if (grid[row][col].value == 0){
+                grid[row][col].filled = 0;
+            }
+            else{
+                grid[row][col].filled = 1;
+            }
+        }
+        free(rows);
+    }
+}
+
 
 int main() {
     // Quote from the 1983 film WarGames
@@ -168,39 +273,39 @@ int main() {
     int flag = has_valid_moves(grid);
     //int win = obtained_2048(grid);
     printf("%d\n", flag);
-    grid[0][0].value = 4;
+    grid[0][0].value = 2;
     grid[0][0].filled = 1;
     grid[1][0].value = 2;
     grid[1][0].filled = 1;
-    grid[2][0].value = 16;
+    grid[2][0].value = 4;
     grid[2][0].filled = 1;
     grid[3][0].value = 8;
     grid[3][0].filled = 1;
 
     grid[0][1].value = 2;
     grid[0][1].filled = 1;
-    grid[1][1].value = 4;
+    grid[1][1].value = 0;
     grid[1][1].filled = 1;
-    grid[2][1].value = 32;
+    grid[2][1].value = 2;
     grid[2][1].filled = 1;
-    grid[3][1].value = 256;
+    grid[3][1].value = 4;
     grid[3][1].filled = 1;
 
 
-    grid[0][2].value = 16;
-    grid[1][2].value = 32;
-    grid[2][2].value = 64;
-    grid[3][2].value = 128;
+    grid[0][2].value = 4;
+    grid[1][2].value = 4;
+    grid[2][2].value = 4;
+    grid[3][2].value = 0;
     grid[0][2].filled = 1;
     grid[1][2].filled = 1;
     grid[2][2].filled = 1;
     grid[3][2].filled = 1;
 
 
-    grid[0][3].value = 256;
-    grid[1][3].value = 512;
-    grid[2][3].value = 32;
-    grid[3][3].value = 1024;
+    grid[0][3].value = 8;
+    grid[1][3].value = 4;
+    grid[2][3].value = 2;
+    grid[3][3].value = 2;
     grid[0][3].filled = 1;
     grid[1][3].filled = 1;
     grid[2][3].filled = 1;
@@ -211,9 +316,48 @@ int main() {
     display_grid(grid);
     printf("%d\n", flag);
 
+    rightward_grid(grid);
+    display_grid(grid);
 
+    rightward_grid(grid);
+    display_grid(grid);
+
+    rightward_grid(grid);
+    display_grid(grid);
+
+    downwards_grid(grid);
+    display_grid(grid);
+
+    leftwards_grid(grid);
+    display_grid(grid);
+
+    downwards_grid(grid);
+    display_grid(grid);
+
+    rightward_grid(grid);
+    display_grid(grid);
+
+    downwards_grid(grid);
+    display_grid(grid);
+
+    leftwards_grid(grid);
+    display_grid(grid);
+
+    downwards_grid(grid);
+    display_grid(grid);
+
+    printf("_________________\n");
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            printf("| %d ", grid[i][j].filled);
+        }
+        printf("|\n");
+    }
+    printf("_________________\n");
 
     printf("A STRANGE GAME.\n");
     printf("THE ONLY WINNING MOVE IS NOT TO PLAY.\n");
+
+    
 
 }
