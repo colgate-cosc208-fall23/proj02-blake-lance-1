@@ -363,7 +363,7 @@ int is_effective_move(struct Blocks **grid, char move){
         downwards_grid(alias,0);
     }
     else if (move == 'd'){
-        downwards_grid(alias,0);
+        rightward_grid(alias,0);
     }
     for (int i = 0; i<4; i++){
         for (int j = 0; j < 4; j++){
