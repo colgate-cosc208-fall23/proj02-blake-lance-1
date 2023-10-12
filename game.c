@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
+#include <string.h>
 
 struct Blocks{
     int value;
@@ -109,7 +110,8 @@ void upwards_column(int column[]){
 
 void upwards_grid(struct Blocks **grid){
     for (int col = 0; col < 4; col++) {
-        int *column = malloc(sizeof(int) * 4);
+        int column[4];
+        //int *column = malloc(sizeof(int) * 4);
         for (int row = 0; row < 4; row++) {
             column[row] = grid[row][col].value;
         }
@@ -126,7 +128,7 @@ void upwards_grid(struct Blocks **grid){
                 grid[row][col].filled = 1;
             }
         }
-        free(column);
+        //free(column);
     }
 }
 
@@ -156,7 +158,9 @@ void downwards_column(int column[]){
 
 void downwards_grid(struct Blocks **grid){
     for (int col = 0; col < 4; col++) {
-        int *column = malloc(sizeof(int) * 4);
+        //int *column = malloc(sizeof(int) * 4);
+        int column[4];
+
         for (int row = 0; row < 4; row++) {
             column[row] = grid[row][col].value;
         }
@@ -172,7 +176,7 @@ void downwards_grid(struct Blocks **grid){
                 grid[row][col].filled = 1;
             }
         }
-        free(column);
+        //free(column);
     }
 }
 
@@ -202,7 +206,9 @@ void rightward_row(int row[]){
 
 void rightward_grid(struct Blocks **grid){
     for (int row = 0; row < 4; row++) {
-        int *rows = malloc(sizeof(int) * 4);
+        //int *rows = malloc(sizeof(int) * 4);
+        int rows[4];
+
         for (int col = 0; col < 4; col++) {
             rows[col] = grid[row][col].value;
         }
@@ -218,7 +224,7 @@ void rightward_grid(struct Blocks **grid){
                 grid[row][col].filled = 1;
             }
         }
-        free(rows);
+        //free(rows);
     }
 }
 
@@ -247,7 +253,9 @@ void leftward_row(int row[]){
 
 void leftwards_grid(struct Blocks **grid){
     for (int row = 0; row < 4; row++) {
-        int *rows = malloc(sizeof(int) * 4);
+        
+        //int *rows = malloc(sizeof(int) * 4);
+        int rows[4];
         for (int col = 0; col < 4; col++) {
             rows[col] = grid[row][col].value;
         }
@@ -263,7 +271,7 @@ void leftwards_grid(struct Blocks **grid){
                 grid[row][col].filled = 1;
             }
         }
-        free(rows);
+        //free(rows);
     }
 }
 
@@ -298,10 +306,51 @@ int main() {
 
     struct Blocks **grid = init_grid(4,4);
     int flag = has_valid_moves(grid);
-    //int win = obtained_2048(grid);
+    int win = obtained_2048(grid);
+    int rounds = 1;
     printf("%d\n", flag);
     display_grid(grid);
+    random_generation(grid);
+    random_generation(grid);
+    
 
+    while (flag == 1 || win==0){
+        printf("Round #%d\n", rounds);
+        display_grid(grid);
+
+        printf("Enter a letter: (w/a/s/d)\n");
+
+        char choice;
+        scanf(" %c", &choice);
+        printf("Your move: %c\n", choice);
+        if (choice == 'w' || choice == 'a' || choice == 'd' || choice == 's'){
+            if (choice == 'w'){
+                upwards_grid(grid);
+            }
+            else if (choice == 'a'){
+                leftwards_grid(grid);
+            }
+            else if (choice == 'd'){
+                rightward_grid(grid);
+            }
+            else if (choice == 's'){
+                downwards_grid(grid);
+            }
+            random_generation(grid);
+            flag = has_valid_moves(grid);
+            win = obtained_2048(grid);
+        }
+        else{
+            printf("Invalid input, try again.\n");
+        }
+    }
+
+    if (flag == 0 && win == 1){
+        printf("You win\n");
+    }
+    else{
+        printf("better luck next time\n");
+    }
 
 
 
