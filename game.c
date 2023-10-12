@@ -101,9 +101,10 @@ int obtained_2048(struct Blocks **grid){
     return 0;
 }
 
-void upwards_column(int column[]){
+int upwards_column(int column[]){
     int up_column[4] = {0,0,0,0};
     int idp_idx = 0;
+    int updated_score = 0;
     for (int i = 0; i<4; i++){
         if (column[i] == 0) continue;  
 
@@ -112,6 +113,7 @@ void upwards_column(int column[]){
         }
         else if (up_column[idp_idx] == column[i]) {
             up_column[idp_idx] *= 2;
+            updated_score = up_column[idp_idx];
             idp_idx++;
         } 
         else {
@@ -122,17 +124,20 @@ void upwards_column(int column[]){
     for (int i = 0; i < 4; i++) {
         column[i] = up_column[i];
     }
+    return updated_score;
 }
 
-void upwards_grid(struct Blocks **grid){
+int upwards_grid(struct Blocks **grid, int score){
+    int return_score = score;
     for (int col = 0; col < 4; col++) {
         int column[4];
+        
         //int *column = malloc(sizeof(int) * 4);
         for (int row = 0; row < 4; row++) {
             column[row] = grid[row][col].value;
         }
         
-        upwards_column(column);
+        return_score += upwards_column(column);
         
 
         for (int row = 0; row < 4; row++) {
@@ -146,11 +151,13 @@ void upwards_grid(struct Blocks **grid){
         }
         //free(column);
     }
+    return return_score;
 }
 
-void downwards_column(int column[]){
+int downwards_column(int column[]){
     int down_column[4] = {0, 0, 0, 0}; 
     int idp_idx = 3; 
+    int updated_score = 0;
 
     for (int i = 3; i >= 0; i--) {
         if (column[i] == 0) continue;  
@@ -159,6 +166,7 @@ void downwards_column(int column[]){
             down_column[idp_idx] = column[i];  
         } else if (down_column[idp_idx] == column[i]) {
             down_column[idp_idx] *= 2;  
+            updated_score = down_column[idp_idx];
             idp_idx--; 
             down_column[idp_idx] = 0;  
         } else {
@@ -170,9 +178,12 @@ void downwards_column(int column[]){
     for (int i = 0; i < 4; i++) {
         column[i] = down_column[i];
     }
+    return updated_score;
 }
 
-void downwards_grid(struct Blocks **grid){
+int downwards_grid(struct Blocks **grid, int score){
+    int return_score = score;
+
     for (int col = 0; col < 4; col++) {
         //int *column = malloc(sizeof(int) * 4);
         int column[4];
@@ -181,7 +192,7 @@ void downwards_grid(struct Blocks **grid){
             column[row] = grid[row][col].value;
         }
         
-        downwards_column(column);
+        return_score += downwards_column(column);
 
         for (int row = 0; row < 4; row++) {
             grid[row][col].value = column[row];
@@ -194,11 +205,13 @@ void downwards_grid(struct Blocks **grid){
         }
         //free(column);
     }
+    return return_score;
 }
 
-void rightward_row(int row[]){
+int rightward_row(int row[], int score){
     int right_row[4] = {0, 0, 0, 0}; 
     int idp_idx = 3; 
+    int updated_score = 0;
 
     for (int i = 3; i >= 0; i--) {
         if (row[i] == 0) continue;  
@@ -206,7 +219,8 @@ void rightward_row(int row[]){
         if (right_row[idp_idx] == 0) {
             right_row[idp_idx] = row[i];  
         } else if (right_row[idp_idx] == row[i]) {
-            right_row[idp_idx] *= 2;  
+            right_row[idp_idx] *= 2; 
+            updated_score += right_row[idp_idx]; 
             idp_idx--; 
             right_row[idp_idx] = 0;  
         } else {
@@ -218,9 +232,11 @@ void rightward_row(int row[]){
     for (int i = 0; i < 4; i++) {
         row[i] = right_row[i];
     }
+    return updated_score;
 }
 
-void rightward_grid(struct Blocks **grid){
+int rightward_grid(struct Blocks **grid, int score){
+    int return_score = score;
     for (int row = 0; row < 4; row++) {
         //int *rows = malloc(sizeof(int) * 4);
         int rows[4];
@@ -229,7 +245,7 @@ void rightward_grid(struct Blocks **grid){
             rows[col] = grid[row][col].value;
         }
         
-        rightward_row(rows);
+        score += rightward_row(rows, score);
 
         for (int col = 0; col < 4; col++) {
             grid[row][col].value = rows[col];
@@ -240,13 +256,14 @@ void rightward_grid(struct Blocks **grid){
                 grid[row][col].filled = 1;
             }
         }
-        //free(rows);
     }
+    return return_score;
 }
 
-void leftward_row(int row[]){
+int leftward_row(int row[]){
     int left_row[4] = {0,0,0,0};
     int idp_idx = 0;
+    int updated_score = 0;
     for (int i = 0; i<4; i++){
         if (row[i] == 0) continue;  
 
@@ -255,6 +272,7 @@ void leftward_row(int row[]){
         }
         else if (left_row[idp_idx] == row[i]) {
             left_row[idp_idx] *= 2;
+            updated_score+=left_row[idp_idx];
             idp_idx++;
         } 
         else {
@@ -265,9 +283,11 @@ void leftward_row(int row[]){
     for (int i = 0; i < 4; i++) {
         row[i] = left_row[i];
     }
+    return updated_score;
 }
 
-void leftwards_grid(struct Blocks **grid){
+int leftwards_grid(struct Blocks **grid, int score){
+    int return_score = score;
     for (int row = 0; row < 4; row++) {
         
         //int *rows = malloc(sizeof(int) * 4);
@@ -276,7 +296,7 @@ void leftwards_grid(struct Blocks **grid){
             rows[col] = grid[row][col].value;
         }
         
-        leftward_row(rows);
+        return_score += leftward_row(rows);
 
         for (int col = 0; col < 4; col++) {
             grid[row][col].value = rows[col];
@@ -287,8 +307,8 @@ void leftwards_grid(struct Blocks **grid){
                 grid[row][col].filled = 1;
             }
         }
-        //free(rows);
     }
+    return return_score;
 }
 
 void random_generation(struct Blocks **grid){
@@ -334,6 +354,7 @@ int main() {
     int flag = has_valid_moves(grid);
     int win = obtained_2048(grid);
     int rounds = 1;
+    int score = 0;
     printf("%d\n", flag);
     display_grid(grid);
     random_generation(grid);
@@ -341,7 +362,7 @@ int main() {
     
 
     while (flag == 1 && win==0){
-        printf("Round #%d\n", rounds);
+        printf("Round #%d     Score: %d\n", rounds, score);
         display_grid(grid);
 
         printf("Enter a letter: (w/a/s/d)\n");
@@ -351,16 +372,16 @@ int main() {
         printf("Your move: %c\n", choice);
         if (choice == 'w' || choice == 'a' || choice == 'd' || choice == 's'){
             if (choice == 'w'){
-                upwards_grid(grid);
+                score = upwards_grid(grid, score);
             }
             else if (choice == 'a'){
-                leftwards_grid(grid);
+                score = leftwards_grid(grid, score);
             }
             else if (choice == 'd'){
-                rightward_grid(grid);
+                score = rightward_grid(grid, score);
             }
             else if (choice == 's'){
-                downwards_grid(grid);
+                score = downwards_grid(grid, score);
             }
             random_generation(grid);
             flag = has_valid_moves(grid);
