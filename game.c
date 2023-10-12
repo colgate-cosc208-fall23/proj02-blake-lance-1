@@ -345,6 +345,37 @@ void free_grid(struct Blocks **grid, int rows) {
     free(grid);
 }
 
+int is_effective_move(struct Blocks **grid, char move){
+    int flag = 0;
+    struct Blocks **alias = init_grid(4,4);
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++){
+            alias[i][j].value = grid[i][j].value;
+        }
+    }
+    if (move == 'w'){
+        upwards_grid(alias, 0);
+    }
+    else if (move == 'a'){
+        leftwards_grid(alias,0);
+    }
+    else if (move == 's'){
+        downwards_grid(alias,0);
+    }
+    else if (move == 'd'){
+        downwards_grid(alias,0);
+    }
+    for (int i = 0; i<4; i++){
+        for (int j = 0; j < 4; j++){
+            if (alias[i][j].value != grid[i][j].value){
+                flag = 1;
+            }
+        }
+    }
+    free_grid(alias, 4);
+    return flag;
+}
+
 int main() {
     // Quote from the 1983 film WarGames
     // Watch the movie for free on Pluto TV
@@ -371,21 +402,30 @@ int main() {
         scanf(" %c", &choice);
         printf("Your move: %c\n", choice);
         if (choice == 'w' || choice == 'a' || choice == 'd' || choice == 's'){
-            if (choice == 'w'){
-                score = upwards_grid(grid, score);
+            int moves = is_effective_move(grid, choice);
+            printf("Moveable: %d\n", moves);
+            if (moves){
+                if (choice == 'w'){
+                    score = upwards_grid(grid, score);
+                }
+                else if (choice == 'a'){
+                    score = leftwards_grid(grid, score);
+                }
+                else if (choice == 'd'){
+                    score = rightward_grid(grid, score);
+                }
+                else if (choice == 's'){
+                    score = downwards_grid(grid, score);
+                }
+                random_generation(grid);
+                flag = has_valid_moves(grid);
+                win = obtained_2048(grid);
             }
-            else if (choice == 'a'){
-                score = leftwards_grid(grid, score);
+            else{
+                printf("=====================\n");
+                printf(" Tiles did not change\n");
+                printf("=====================\n");
             }
-            else if (choice == 'd'){
-                score = rightward_grid(grid, score);
-            }
-            else if (choice == 's'){
-                score = downwards_grid(grid, score);
-            }
-            random_generation(grid);
-            flag = has_valid_moves(grid);
-            win = obtained_2048(grid);
         }
         else{
             printf("Invalid input, try again.\n");
