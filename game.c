@@ -31,14 +31,30 @@ struct Blocks** init_grid(int rows, int cols){
 }
 
 void display_grid(struct Blocks **grid) {
-    printf("_________________\n");
+    printf("_____________________\n");
     for (int i = 0; i < 4; i++) {
+        printf("______ ______ ______ ______\n");
+
+        printf("|    | |    | |    | |    |\n");
         for (int j = 0; j < 4; j++) {
-            printf("| %d ", grid[i][j].value);
+            if (grid[i][j].value < 10){
+                printf("|  %d | ", grid[i][j].value);
+            }
+            else if (grid[i][j].value < 100){
+                printf("| %d | ", grid[i][j].value);
+            }
+            else if (grid[i][j].value < 1000){
+                printf("| %d| ", grid[i][j].value);
+            }
+            else if (grid[i][j].value < 10000){
+                printf("|%d| ", grid[i][j].value);
+            }
         }
-        printf("|\n");
+        printf("\n");
+        printf("|    | |    | |    | |    |\n");
+        printf("‾‾‾‾‾‾ ‾‾‾‾‾‾ ‾‾‾‾‾‾ ‾‾‾‾‾‾\n");
+
     }
-    printf("_________________\n");
 }
 
 int has_valid_moves(struct Blocks **grid){
@@ -324,7 +340,7 @@ int main() {
     random_generation(grid);
     
 
-    while (flag == 1 || win==0){
+    while (flag == 1 && win==0){
         printf("Round #%d\n", rounds);
         display_grid(grid);
 
@@ -356,7 +372,7 @@ int main() {
         rounds++;
     }
 
-    if (flag == 0 && win == 1){
+    if (win == 1){
         printf("You win\n");
     }
     else{
@@ -365,75 +381,7 @@ int main() {
 
     free_grid(grid, 4);
 
-    /*
-    grid[0][0].value = 2;
-    grid[1][0].value = 2;
-    grid[2][0].value = 4;
-    grid[3][0].value = 8;
-
-    grid[0][1].value = 2;
-    grid[1][1].value = 0;
-    grid[2][1].value = 2;
-    grid[3][1].value = 4;
-
-
-    grid[0][2].value = 4;
-    grid[1][2].value = 4;
-    grid[2][2].value = 4;
-    grid[3][2].value = 0;
-
-
-    grid[0][3].value = 8;
-    grid[1][3].value = 4;
-    grid[2][3].value = 2;
-    grid[3][3].value = 2;
-
-
-    flag = has_valid_moves(grid);
-    display_grid(grid);
-    printf("%d\n", flag);
-
-    rightward_grid(grid);
-    display_grid(grid);
-
-    rightward_grid(grid);
-    display_grid(grid);
-
-    rightward_grid(grid);
-    display_grid(grid);
-
-    downwards_grid(grid);
-    display_grid(grid);
-
-    leftwards_grid(grid);
-    display_grid(grid);
-
-    downwards_grid(grid);
-    display_grid(grid);
-
-    rightward_grid(grid);
-    display_grid(grid);
-
-    downwards_grid(grid);
-    display_grid(grid);
-
-    leftwards_grid(grid);
-    display_grid(grid);
-
-    downwards_grid(grid);
-    display_grid(grid);
-
-    printf("_________________\n");
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            printf("| %d ", grid[i][j].filled);
-        }
-        printf("|\n");
-    }
-    printf("_________________\n");
-
-    */
-
+    
     printf("A STRANGE GAME.\n");
     printf("THE ONLY WINNING MOVE IS NOT TO PLAY.\n");
 
