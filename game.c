@@ -12,6 +12,11 @@ struct Blocks{
     int filled;
 };
 
+struct Dimensions{
+    int rows;
+    int cols;
+};
+
 struct Blocks** init_grid(int rows, int cols){
     struct Blocks **grid = malloc(sizeof(struct Blocks *) * rows);
     for (int i = 0; i < 4; i++){
@@ -240,7 +245,6 @@ void leftward_row(int row[]){
     }
 }
 
-
 void leftwards_grid(struct Blocks **grid){
     for (int row = 0; row < 4; row++) {
         int *rows = malloc(sizeof(int) * 4);
@@ -263,6 +267,29 @@ void leftwards_grid(struct Blocks **grid){
     }
 }
 
+void random_generation(struct Blocks **grid){
+    struct Dimensions collection[16];
+    int counter = 0;
+    for (int row = 0; row < 4; row++){
+        for (int col = 0; col < 4; col++){
+            if (grid[row][col].filled == 0){
+                collection[counter].rows = row;
+                collection[counter].cols = col;
+                counter++;
+            }
+        }
+    }
+    int random_num = rand() % 16;
+    float two_four_decider = (float)rand() / (float)RAND_MAX;
+    if (two_four_decider >= 0.9){
+        grid[collection[random_num].rows][collection[random_num].cols].value = 4;
+    }
+    else{
+        grid[collection[random_num].rows][collection[random_num].cols].value = 2;
+    }
+    grid[collection[random_num].rows][collection[random_num].cols].filled = 1;
+
+}
 
 int main() {
     // Quote from the 1983 film WarGames
@@ -273,43 +300,33 @@ int main() {
     int flag = has_valid_moves(grid);
     //int win = obtained_2048(grid);
     printf("%d\n", flag);
+    display_grid(grid);
+
+
+
+
+    /*
     grid[0][0].value = 2;
-    grid[0][0].filled = 1;
     grid[1][0].value = 2;
-    grid[1][0].filled = 1;
     grid[2][0].value = 4;
-    grid[2][0].filled = 1;
     grid[3][0].value = 8;
-    grid[3][0].filled = 1;
 
     grid[0][1].value = 2;
-    grid[0][1].filled = 1;
     grid[1][1].value = 0;
-    grid[1][1].filled = 1;
     grid[2][1].value = 2;
-    grid[2][1].filled = 1;
     grid[3][1].value = 4;
-    grid[3][1].filled = 1;
 
 
     grid[0][2].value = 4;
     grid[1][2].value = 4;
     grid[2][2].value = 4;
     grid[3][2].value = 0;
-    grid[0][2].filled = 1;
-    grid[1][2].filled = 1;
-    grid[2][2].filled = 1;
-    grid[3][2].filled = 1;
 
 
     grid[0][3].value = 8;
     grid[1][3].value = 4;
     grid[2][3].value = 2;
     grid[3][3].value = 2;
-    grid[0][3].filled = 1;
-    grid[1][3].filled = 1;
-    grid[2][3].filled = 1;
-    grid[3][3].filled = 1;
 
 
     flag = has_valid_moves(grid);
@@ -354,6 +371,8 @@ int main() {
         printf("|\n");
     }
     printf("_________________\n");
+
+    */
 
     printf("A STRANGE GAME.\n");
     printf("THE ONLY WINNING MOVE IS NOT TO PLAY.\n");
