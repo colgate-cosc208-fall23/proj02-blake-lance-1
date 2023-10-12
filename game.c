@@ -20,9 +20,9 @@ struct Dimensions{
 
 struct Blocks** init_grid(int rows, int cols){
     struct Blocks **grid = malloc(sizeof(struct Blocks *) * rows);
-    for (int i = 0; i < 4; i++){
+    for (int i = 0; i < rows; i++){
         grid[i] = malloc(sizeof(struct Blocks *)*cols);
-        for (int j = 0; j < 4; j++){
+        for (int j = 0; j < cols; j++){
             grid[i][j].value = 0;
             grid[i][j].filled = 0;
         }
@@ -287,7 +287,10 @@ void random_generation(struct Blocks **grid){
             }
         }
     }
-    int random_num = rand() % 16;
+    int random_num = rand() % counter - 1;
+    if (random_num < 0){
+        random_num = 0;
+    }
     float two_four_decider = (float)rand() / (float)RAND_MAX;
     if (two_four_decider >= 0.9){
         grid[collection[random_num].rows][collection[random_num].cols].value = 4;
@@ -297,6 +300,13 @@ void random_generation(struct Blocks **grid){
     }
     grid[collection[random_num].rows][collection[random_num].cols].filled = 1;
 
+}
+
+void free_grid(struct Blocks **grid, int rows) {
+    for (int i = 0; i < rows; i++) {
+        free(grid[i]);
+    }
+    free(grid);
 }
 
 int main() {
@@ -343,6 +353,7 @@ int main() {
         else{
             printf("Invalid input, try again.\n");
         }
+        rounds++;
     }
 
     if (flag == 0 && win == 1){
@@ -352,7 +363,7 @@ int main() {
         printf("better luck next time\n");
     }
 
-
+    free_grid(grid, 4);
 
     /*
     grid[0][0].value = 2;
@@ -429,3 +440,5 @@ int main() {
     
 
 }
+
+
