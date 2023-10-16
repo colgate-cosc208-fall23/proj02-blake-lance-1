@@ -402,8 +402,8 @@ int main() {
     int win = obtained_2048(grid);
     int rounds = 1;
     int score = 0;
-    printf("%d\n", flag);
-    display_grid(grid);
+    //printf("%d\n", flag);
+    //display_grid(grid);
     random_generation(grid);
     random_generation(grid);
     
@@ -414,23 +414,25 @@ int main() {
 
         printf("Enter a letter: (w(up)/a(left)/s(down)/d(right))\n");
 
-        char choice;
-        scanf(" %c", &choice);
-        printf("Your move: %c\n", choice);
-        if (choice == 'w' || choice == 'a' || choice == 'd' || choice == 's'){
-            int moves = is_effective_move(grid, choice);
-            printf("Moveable: %d\n", moves);
+        char choice[10];//10 character should be enough to store input
+        fgets(choice, 10, stdin);
+        choice[strlen(choice)-1] = '\0';
+        printf("Your move: %s\n", choice);
+        //printf("%ld",strlen(choice));
+        if (!strcmp(choice,"w") || !strcmp(choice,"a") || !strcmp(choice,"d") || !strcmp(choice,"s")){
+            int moves = is_effective_move(grid, choice[0]);
+            //printf("Moveable: %d\n", moves);
             if (moves){
-                if (choice == 'w'){
+                if (!strcmp(choice,"w")){
                     score = upwards_grid(grid, score);
                 }
-                else if (choice == 'a'){
+                else if (!strcmp(choice,"a")){
                     score = leftwards_grid(grid, score);
                 }
-                else if (choice == 'd'){
+                else if (!strcmp(choice,"d")){
                     score = rightward_grid(grid, score);
                 }
-                else if (choice == 's'){
+                else if (!strcmp(choice,"s")){
                     score = downwards_grid(grid, score);
                 }
                 random_generation(grid);
