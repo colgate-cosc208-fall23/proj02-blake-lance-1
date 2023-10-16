@@ -10,8 +10,9 @@
 
 int dim = 4;
 //magic number 4?
-//fgets instead of scan.
+//fgets instead of scanf. How many inputs character should we expect.
 //exit option?
+//combine some functions, simplify
 struct Blocks{
     int value;
     int filled;
