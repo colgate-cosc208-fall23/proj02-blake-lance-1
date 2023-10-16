@@ -8,11 +8,11 @@
 #include <termios.h>
 #include <string.h>
 
-#define DIM 4
-#define WGAME 2048
-//magic number 4?
-//fgets instead of scanf. How many inputs character should we expect.
-//combine some functions, simplify
+#define DIM 4//dimention of the game.
+#define WGAME 2048//win condition of the game
+
+//style fix
+
 struct Blocks{
     int value;
     int filled;
@@ -407,6 +407,13 @@ int main() {
     //display_grid(grid);
     random_generation(grid);
     random_generation(grid);
+    printf("Manual:\n");
+    printf("move up the grid, press w");
+    printf("move right the grid, press d");
+    printf("move left the grid, press a");
+    printf("move down the grid, press s\n");
+    printf("Only same numbers can add up.");
+    printf("2048 is a victory!\n");
     
 
     while (flag == 1 && win==0){
