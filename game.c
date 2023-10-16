@@ -8,10 +8,10 @@
 #include <termios.h>
 #include <string.h>
 
-int dim = 4;
+#define DIM 4
+#define WGAME 2048
 //magic number 4?
 //fgets instead of scanf. How many inputs character should we expect.
-//exit option?
 //combine some functions, simplify
 struct Blocks{
     int value;
@@ -37,11 +37,11 @@ struct Blocks** init_grid(int rows, int cols){
 
 void display_grid(struct Blocks **grid) {
     printf("_____________________\n");
-    for (int i = 0; i < dim; i++) {
+    for (int i = 0; i < DIM; i++) {
         printf("______ ______ ______ ______\n");
 
         printf("|    | |    | |    | |    |\n");
-        for (int j = 0; j < dim; j++) {
+        for (int j = 0; j < DIM; j++) {
             if (grid[i][j].value < 10){
                 printf("|  %d | ", grid[i][j].value);
             }
@@ -63,15 +63,15 @@ void display_grid(struct Blocks **grid) {
 }
 
 int has_valid_moves(struct Blocks **grid){
-    for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
             if (grid[i][j].filled == 0) {
                 return 1;
             }
         }
     }
-    for (int i = 0; i < dim; i++){
-        for (int j = 0; j < dim; j++) {
+    for (int i = 0; i < DIM; i++){
+        for (int j = 0; j < DIM; j++) {
             int val = grid[i][j].value;
 
             // Check above
@@ -79,7 +79,7 @@ int has_valid_moves(struct Blocks **grid){
                 return 1;
             }
             // Check below
-            if (i < 3 && grid[i + 1][j].value == val) {
+            if (i < (DIM-1) && grid[i + 1][j].value == val) {
                 return 1;
             }
             // Check left
@@ -87,7 +87,7 @@ int has_valid_moves(struct Blocks **grid){
                 return 1;
             }
             // Check right
-            if (j < 3 && grid[i][j + 1].value == val) {
+            if (j < (DIM-1) && grid[i][j + 1].value == val) {
                 return 1;
             }
         }
@@ -96,9 +96,9 @@ int has_valid_moves(struct Blocks **grid){
 }
 
 int obtained_2048(struct Blocks **grid){
-    for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
-            if (grid[i][j].value == 2048) {
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
+            if (grid[i][j].value == WGAME) {
                 return 1;
             }
         }
@@ -107,20 +107,20 @@ int obtained_2048(struct Blocks **grid){
 }
 
 int upwards_column(int column[]){
-    int up_column[dim];
-    for (int i = 0; i<dim; i++){
+    int up_column[DIM];
+    for (int i = 0; i<DIM; i++){
         up_column[i] = 0;
     }
     int idp_idx = 0;
     int updated_score = 0;
-    for (int i = 0; i<dim; i++){
+    for (int i = 0; i<DIM; i++){
         if (column[i] == 0) continue;  
 
         if (up_column[idp_idx] == 0){
             up_column[idp_idx] = column[i];
         }
         else if (up_column[idp_idx] == column[i]) {
-            up_column[idp_idx] *= 2;
+            up_column[idp_idx] *= (DIM-2);
             updated_score = up_column[idp_idx];
             idp_idx++;
         } 
@@ -129,7 +129,7 @@ int upwards_column(int column[]){
             up_column[idp_idx] = column[i];
         }
     }
-    for (int i = 0; i < dim; i++) {
+    for (int i = 0; i < DIM; i++) {
         column[i] = up_column[i];
     }
     return updated_score;
@@ -137,18 +137,18 @@ int upwards_column(int column[]){
 
 int upwards_grid(struct Blocks **grid, int score){
     int return_score = score;
-    for (int col = 0; col < dim; col++) {
-        int column[dim];
+    for (int col = 0; col < DIM; col++) {
+        int column[DIM];
         
         //int *column = malloc(sizeof(int) * 4);
-        for (int row = 0; row < dim; row++) {
+        for (int row = 0; row < DIM; row++) {
             column[row] = grid[row][col].value;
         }
         
         return_score += upwards_column(column);
         
 
-        for (int row = 0; row < dim; row++) {
+        for (int row = 0; row < DIM; row++) {
             grid[row][col].value = column[row];
             if (grid[row][col].value == 0){
                 grid[row][col].filled = 0;
@@ -163,20 +163,20 @@ int upwards_grid(struct Blocks **grid, int score){
 }
 
 int downwards_column(int column[]){
-    int down_column[dim]; 
-    for (int i = 0; i<dim; i++){
+    int down_column[DIM]; 
+    for (int i = 0; i<DIM; i++){
         down_column[i] = 0;
     }
-    int idp_idx = 3; 
+    int idp_idx = (DIM-1); 
     int updated_score = 0;
 
-    for (int i = 3; i >= 0; i--) {
+    for (int i = (DIM-1); i >= 0; i--) {
         if (column[i] == 0) continue;  
 
         if (down_column[idp_idx] == 0) {
             down_column[idp_idx] = column[i];  
         } else if (down_column[idp_idx] == column[i]) {
-            down_column[idp_idx] *= 2;  
+            down_column[idp_idx] *= (DIM-2);  
             updated_score = down_column[idp_idx];
             idp_idx--; 
             down_column[idp_idx] = 0;  
@@ -186,7 +186,7 @@ int downwards_column(int column[]){
         }
     }
 
-    for (int i = 0; i < dim; i++) {
+    for (int i = 0; i < DIM; i++) {
         column[i] = down_column[i];
     }
     return updated_score;
@@ -195,17 +195,17 @@ int downwards_column(int column[]){
 int downwards_grid(struct Blocks **grid, int score){
     int return_score = score;
 
-    for (int col = 0; col < dim; col++) {
+    for (int col = 0; col < DIM; col++) {
         //int *column = malloc(sizeof(int) * 4);
-        int column[dim];
+        int column[DIM];
 
-        for (int row = 0; row < dim; row++) {
+        for (int row = 0; row < DIM; row++) {
             column[row] = grid[row][col].value;
         }
         
         return_score += downwards_column(column);
 
-        for (int row = 0; row < dim; row++) {
+        for (int row = 0; row < DIM; row++) {
             grid[row][col].value = column[row];
             if (grid[row][col].value == 0){
                 grid[row][col].filled = 0;
@@ -220,20 +220,20 @@ int downwards_grid(struct Blocks **grid, int score){
 }
 
 int rightward_row(int row[], int score){
-    int right_row[dim]; 
-    for (int i = 0; i<dim; i++){
+    int right_row[DIM]; 
+    for (int i = 0; i<DIM; i++){
         right_row[i] = 0;
     }
-    int idp_idx = 3; 
+    int idp_idx = (DIM-1); 
     int updated_score = 0;
 
-    for (int i = 3; i >= 0; i--) {
+    for (int i = (DIM-1); i >= 0; i--) {
         if (row[i] == 0) continue;  
 
         if (right_row[idp_idx] == 0) {
             right_row[idp_idx] = row[i];  
         } else if (right_row[idp_idx] == row[i]) {
-            right_row[idp_idx] *= 2; 
+            right_row[idp_idx] *= (DIM-2); 
             updated_score += right_row[idp_idx]; 
             idp_idx--; 
             right_row[idp_idx] = 0;  
@@ -243,7 +243,7 @@ int rightward_row(int row[], int score){
         }
     }
 
-    for (int i = 0; i < dim; i++) {
+    for (int i = 0; i < DIM; i++) {
         row[i] = right_row[i];
     }
     return updated_score;
@@ -251,17 +251,17 @@ int rightward_row(int row[], int score){
 
 int rightward_grid(struct Blocks **grid, int score){
     int return_score = score;
-    for (int row = 0; row < dim; row++) {
+    for (int row = 0; row < DIM; row++) {
         //int *rows = malloc(sizeof(int) * 4);
-        int rows[dim];
+        int rows[DIM];
 
-        for (int col = 0; col < dim; col++) {
+        for (int col = 0; col < DIM; col++) {
             rows[col] = grid[row][col].value;
         }
         
         score += rightward_row(rows, score);
 
-        for (int col = 0; col < dim; col++) {
+        for (int col = 0; col < DIM; col++) {
             grid[row][col].value = rows[col];
             if (grid[row][col].value == 0){
                 grid[row][col].filled = 0;
@@ -275,20 +275,20 @@ int rightward_grid(struct Blocks **grid, int score){
 }
 
 int leftward_row(int row[]){
-    int left_row[dim];
-    for (int i = 0; i<dim; i++){
+    int left_row[DIM];
+    for (int i = 0; i<DIM; i++){
         left_row[i] = 0;
     }
     int idp_idx = 0;
     int updated_score = 0;
-    for (int i = 0; i<dim; i++){
+    for (int i = 0; i<DIM; i++){
         if (row[i] == 0) continue;  
 
         if (left_row[idp_idx] == 0){
             left_row[idp_idx] = row[i];
         }
         else if (left_row[idp_idx] == row[i]) {
-            left_row[idp_idx] *= 2;
+            left_row[idp_idx] *= (DIM-2);
             updated_score+=left_row[idp_idx];
             idp_idx++;
         } 
@@ -297,7 +297,7 @@ int leftward_row(int row[]){
             left_row[idp_idx] = row[i];
         }
     }
-    for (int i = 0; i < dim; i++) {
+    for (int i = 0; i < DIM; i++) {
         row[i] = left_row[i];
     }
     return updated_score;
@@ -305,17 +305,17 @@ int leftward_row(int row[]){
 
 int leftwards_grid(struct Blocks **grid, int score){
     int return_score = score;
-    for (int row = 0; row < dim; row++) {
+    for (int row = 0; row < DIM; row++) {
         
         //int *rows = malloc(sizeof(int) * 4);
-        int rows[dim];
-        for (int col = 0; col < dim; col++) {
+        int rows[DIM];
+        for (int col = 0; col < DIM; col++) {
             rows[col] = grid[row][col].value;
         }
         
         return_score += leftward_row(rows);
 
-        for (int col = 0; col < dim; col++) {
+        for (int col = 0; col < DIM; col++) {
             grid[row][col].value = rows[col];
             if (grid[row][col].value == 0){
                 grid[row][col].filled = 0;
@@ -331,8 +331,8 @@ int leftwards_grid(struct Blocks **grid, int score){
 void random_generation(struct Blocks **grid){
     struct Dimensions collection[16];
     int counter = 0;
-    for (int row = 0; row < dim; row++){
-        for (int col = 0; col < dim; col++){
+    for (int row = 0; row < DIM; row++){
+        for (int col = 0; col < DIM; col++){
             if (grid[row][col].filled == 0){
                 collection[counter].rows = row;
                 collection[counter].cols = col;
@@ -349,7 +349,7 @@ void random_generation(struct Blocks **grid){
         grid[collection[random_num].rows][collection[random_num].cols].value = 4;
     }
     else{
-        grid[collection[random_num].rows][collection[random_num].cols].value = 2;
+        grid[collection[random_num].rows][collection[random_num].cols].value = (DIM-2);
     }
     grid[collection[random_num].rows][collection[random_num].cols].filled = 1;
 
@@ -364,9 +364,9 @@ void free_grid(struct Blocks **grid, int rows) {
 
 int is_effective_move(struct Blocks **grid, char move){
     int flag = 0;
-    struct Blocks **alias = init_grid(dim,dim);
-    for (int i = 0; i < dim; i++){
-        for (int j = 0; j < dim; j++){
+    struct Blocks **alias = init_grid(DIM,DIM);
+    for (int i = 0; i < DIM; i++){
+        for (int j = 0; j < DIM; j++){
             alias[i][j].value = grid[i][j].value;
         }
     }
@@ -382,14 +382,14 @@ int is_effective_move(struct Blocks **grid, char move){
     else if (move == 'd'){
         rightward_grid(alias,0);
     }
-    for (int i = 0; i<dim; i++){
-        for (int j = 0; j < dim; j++){
+    for (int i = 0; i<DIM; i++){
+        for (int j = 0; j < DIM; j++){
             if (alias[i][j].value != grid[i][j].value){
                 flag = 1;
             }
         }
     }
-    free_grid(alias, dim);
+    free_grid(alias, DIM);
     return flag;
 }
 
@@ -398,7 +398,7 @@ int main() {
     // Watch the movie for free on Pluto TV
     // https://pluto.tv/en/on-demand/movies/5e3c8d1a86e96850bcc4a88f
 
-    struct Blocks **grid = init_grid(dim,dim);
+    struct Blocks **grid = init_grid(DIM,DIM);
     int flag = has_valid_moves(grid);
     int win = obtained_2048(grid);
     int rounds = 1;
@@ -459,7 +459,7 @@ int main() {
         printf("Oh no. You are dead.\nbetter luck next time\n");
     }
 
-    free_grid(grid, dim);
+    free_grid(grid, DIM);
 
     
     printf("A STRANGE GAME.\n");
