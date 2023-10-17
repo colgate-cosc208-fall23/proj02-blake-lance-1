@@ -393,29 +393,7 @@ int is_effective_move(struct Blocks **grid, char move){
     return flag;
 }
 
-int main() {
-    // Quote from the 1983 film WarGames
-    // Watch the movie for free on Pluto TV
-    // https://pluto.tv/en/on-demand/movies/5e3c8d1a86e96850bcc4a88f
-
-    struct Blocks **grid = init_grid(DIM,DIM);
-    int flag = has_valid_moves(grid);
-    int win = obtained_2048(grid);
-    int rounds = 1;
-    int score = 0;
-    //printf("%d\n", flag);
-    //display_grid(grid);
-    random_generation(grid);
-    random_generation(grid);
-    printf("Manual:\n");
-    printf("move up the grid, press w");
-    printf("move right the grid, press d");
-    printf("move left the grid, press a");
-    printf("move down the grid, press s\n");
-    printf("Only same numbers can add up.");
-    printf("2048 is a victory!\n");
-    
-
+void play(int win, int flag, int rounds, int score, struct Blocks **grid){
     while (flag == 1 && win==0){
         printf("Round #%d     Score: %d\n", rounds, score);
         display_grid(grid);
@@ -465,6 +443,32 @@ int main() {
     else{
         printf("Oh no. You are dead.\nbetter luck next time\n");
     }
+}
+
+int main() {
+    // Quote from the 1983 film WarGames
+    // Watch the movie for free on Pluto TV
+    // https://pluto.tv/en/on-demand/movies/5e3c8d1a86e96850bcc4a88f
+
+    struct Blocks **grid = init_grid(DIM,DIM);
+    int flag = has_valid_moves(grid);
+    int win = obtained_2048(grid);
+    int rounds = 1;
+    int score = 0;
+    //printf("%d\n", flag);
+    //display_grid(grid);
+    random_generation(grid);
+    random_generation(grid);
+    printf("Manual:\n");
+    printf("move up the grid, press w. ");
+    printf("move right the grid, press d. ");
+    printf("move left the grid, press a. ");
+    printf("move down the grid, press s.\n");
+    printf("Only same numbers can add up.");
+    printf("2048 is a victory!\n");
+    
+
+    play(win,flag,rounds,score,grid);
 
     free_grid(grid, DIM);
 
