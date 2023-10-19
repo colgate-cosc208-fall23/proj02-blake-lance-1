@@ -61,6 +61,14 @@ void display_grid(struct Blocks **grid) {
     }
 }
 
+/*
+void display_header(int rounds, int score, struct Blocks **grid){
+    printf("Round #%d     Score: %d\n", rounds, score);
+    display_grid(grid);
+    printf("Enter a letter: w(up) / a(left) / s(down) / d(right)\n");
+}
+*/
+
 int has_valid_moves(struct Blocks **grid){
     for (int i = 0; i < DIM; i++) {
         for (int j = 0; j < DIM; j++) {
@@ -411,10 +419,10 @@ int manual(){
     printf("\t- When two tiles with the same number collide, they combine to form a single tile with double the value.\n\n");
 
     printf("Do you want to begin? y (yes) / n (and all other characters) (no)\n");
-    char choice[2];//10 character should be enough to store input
-    fgets(choice, 2, stdin);
-    choice[sizeof(choice)-1] = '\0';
-    if (strcmp(choice, "y") == 0){
+    char choice[3];//10 character should be enough to store input
+    fgets(choice, 3, stdin);
+    choice[2] = '\0';
+    if (strcmp(choice, "y\n") == 0){
         return 1;
     }
     else {
@@ -422,36 +430,53 @@ int manual(){
     }
 }
 
+int move_grid(int score, char choice, struct Blocks **grid){
+    int new_score;
+    if (choice == 'w'){
+        new_score = upwards_grid(grid, score);
+    }
+    else if (choice == 'a'){
+        new_score = leftwards_grid(grid, score);
+    }
+    else if (choice == 'd'){
+        new_score = rightward_grid(grid, score);
+    }
+    else if (choice == 's'){
+        new_score = downwards_grid(grid, score);
+    }
+    random_generation(grid);
+    return new_score;
+}
+
+void summary(int win, struct Blocks **grid){
+    if (win == 1){
+        display_grid(grid);
+        printf("You win! \n");
+    }
+    else{
+        printf("Oh no. You are dead.\nbetter luck next time\n");
+    }
+}
 
 void play(int win, int flag, int rounds, int score, struct Blocks **grid){
     while (flag == 1 && win==0){
+        //display_header(rounds, score, grid);
+        printf("%d\n", rounds);
         printf("Round #%d     Score: %d\n", rounds, score);
+
         display_grid(grid);
-
         printf("Enter a letter: w(up) / a(left) / s(down) / d(right)\n");
-
-        char choice[10];//10 character should be enough to store input
-        fgets(choice, 10, stdin);
-        choice[strlen(choice)-1] = '\0';
-        printf("Your move: %s\n", choice);
+            
+        char move[3];//10 character should be enough to store input
+        fgets(move, 3, stdin);
+        move[2] = '\0';
+        printf("Your move: %c\n", move[0]);
         //printf("%ld",strlen(choice));
-        if (!strcmp(choice,"w") || !strcmp(choice,"a") || !strcmp(choice,"d") || !strcmp(choice,"s")){
-            int moves = is_effective_move(grid, choice[0]);
+        if (move[0] == 'w' || move[0] == 'a' || move[0] == 's' || move[0]=='d'){
+            int moves = is_effective_move(grid, move[0]);
             //printf("Moveable: %d\n", moves);
             if (moves){
-                if (!strcmp(choice,"w")){
-                    score = upwards_grid(grid, score);
-                }
-                else if (!strcmp(choice,"a")){
-                    score = leftwards_grid(grid, score);
-                }
-                else if (!strcmp(choice,"d")){
-                    score = rightward_grid(grid, score);
-                }
-                else if (!strcmp(choice,"s")){
-                    score = downwards_grid(grid, score);
-                }
-                random_generation(grid);
+                score = move_grid(score, move[0], grid);
                 flag = has_valid_moves(grid);
                 win = obtained_2048(grid);
             }
@@ -464,15 +489,11 @@ void play(int win, int flag, int rounds, int score, struct Blocks **grid){
         else{
             printf("Invalid input, try again.\n");
         }
+        
         rounds++;
     }
+    summary(win, grid);
 
-    if (win == 1){
-        printf("You win\n");
-    }
-    else{
-        printf("Oh no. You are dead.\nbetter luck next time\n");
-    }
 }
 
 int main() {
@@ -483,7 +504,7 @@ int main() {
     struct Blocks **grid = init_grid(DIM,DIM);
     int flag = has_valid_moves(grid);
     int win = obtained_2048(grid);
-    int rounds = 1;
+    int rounds = 0;
     int score = 0;
     //printf("%d\n", flag);
     //display_grid(grid);
@@ -498,10 +519,5 @@ int main() {
         printf("See you next time!\n");
     }
     
-    printf("A STRANGE GAME.\n");
-    printf("THE ONLY WINNING MOVE IS NOT TO PLAY.\n");
-
-    
 }
-
 
