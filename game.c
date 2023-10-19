@@ -454,11 +454,13 @@ void summary(int win, struct Blocks **grid){
         printf("You win! \n");
     }
     else{
-        printf("Oh no. You are dead.\nbetter luck next time\n");
+        printf("Oh no. Game Over.\nBetter luck next time\n");
     }
 }
 
 void play(int win, int flag, int rounds, int score, struct Blocks **grid){
+    random_generation(grid);
+    random_generation(grid);
     while (flag == 1 && win==0){
         display_header(rounds, score, grid);
             
@@ -496,22 +498,19 @@ int main() {
     // Watch the movie for free on Pluto TV
     // https://pluto.tv/en/on-demand/movies/5e3c8d1a86e96850bcc4a88f
 
-    struct Blocks **grid = init_grid(DIM,DIM);
-    int flag = has_valid_moves(grid);
-    int win = obtained_2048(grid);
-    int rounds = 1;
-    int score = 0;
-    //printf("%d\n", flag);
-    //display_grid(grid);
-    random_generation(grid);
-    random_generation(grid);
+
     int play_check = manual();
     if (play_check){
+        struct Blocks **grid = init_grid(DIM,DIM);
+        int flag = has_valid_moves(grid);
+        int win = obtained_2048(grid);
+        int rounds = 1;
+        int score = 0;
         play(win, flag, rounds, score, grid);
+        free_grid(grid, DIM);
     }
     else{
         printf("See you next time!\n");
     }
-    free_grid(grid, DIM);
 
 }
