@@ -61,13 +61,13 @@ void display_grid(struct Blocks **grid) {
     }
 }
 
-/*
+
 void display_header(int rounds, int score, struct Blocks **grid){
     printf("Round #%d     Score: %d\n", rounds, score);
     display_grid(grid);
     printf("Enter a letter: w(up) / a(left) / s(down) / d(right)\n");
 }
-*/
+
 
 int has_valid_moves(struct Blocks **grid){
     for (int i = 0; i < DIM; i++) {
@@ -449,8 +449,8 @@ int move_grid(int score, char choice, struct Blocks **grid){
 }
 
 void summary(int win, struct Blocks **grid){
+    display_grid(grid);
     if (win == 1){
-        display_grid(grid);
         printf("You win! \n");
     }
     else{
@@ -460,12 +460,7 @@ void summary(int win, struct Blocks **grid){
 
 void play(int win, int flag, int rounds, int score, struct Blocks **grid){
     while (flag == 1 && win==0){
-        //display_header(rounds, score, grid);
-        printf("%d\n", rounds);
-        printf("Round #%d     Score: %d\n", rounds, score);
-
-        display_grid(grid);
-        printf("Enter a letter: w(up) / a(left) / s(down) / d(right)\n");
+        display_header(rounds, score, grid);
             
         char move[3];//10 character should be enough to store input
         fgets(move, 3, stdin);
@@ -504,7 +499,7 @@ int main() {
     struct Blocks **grid = init_grid(DIM,DIM);
     int flag = has_valid_moves(grid);
     int win = obtained_2048(grid);
-    int rounds = 0;
+    int rounds = 1;
     int score = 0;
     //printf("%d\n", flag);
     //display_grid(grid);
@@ -513,11 +508,10 @@ int main() {
     int play_check = manual();
     if (play_check){
         play(win, flag, rounds, score, grid);
-        free_grid(grid, DIM);
     }
     else{
         printf("See you next time!\n");
     }
-    
-}
+    free_grid(grid, DIM);
 
+}
