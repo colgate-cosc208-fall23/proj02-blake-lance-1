@@ -393,12 +393,43 @@ int is_effective_move(struct Blocks **grid, char move){
     return flag;
 }
 
+int manual(){
+    printf("Welcome to Command Line 2048!!!\n");
+    printf("===============================\n\n");
+    printf("How to play: \n");
+    printf("Slide tiles on a 4x4 game grid by using w/a/s/d. \n");
+    printf("Slide two same tiles together to form a larger tile.\n");
+    printf("You win when you get a 2048 tile!\n\n");
+    
+    printf("Movements:\n");
+    printf("\t- Use the 'w' key to slide up\n");
+    printf("\t- Use the 'a' key to slide left\n");
+    printf("\t- Use the 's' key to slide down\n");
+    printf("\t- Use the 'd' key to slide right\n\n");
+
+    printf("Scoring:\n");
+    printf("\t- Each move generates a new tile (either 2 or 4) in an empty slot on the board.\n");
+    printf("\t- When two tiles with the same number collide, they combine to form a single tile with double the value.\n\n");
+
+    printf("Do you want to begin? y (yes) / n (and all other characters) (no)\n");
+    char choice[2];//10 character should be enough to store input
+    fgets(choice, 2, stdin);
+    choice[sizeof(choice)-1] = '\0';
+    if (strcmp(choice, "y") == 0){
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+
 void play(int win, int flag, int rounds, int score, struct Blocks **grid){
     while (flag == 1 && win==0){
         printf("Round #%d     Score: %d\n", rounds, score);
         display_grid(grid);
 
-        printf("Enter a letter: (w(up)/a(left)/s(down)/d(right))\n");
+        printf("Enter a letter: w(up) / a(left) / s(down) / d(right)\n");
 
         char choice[10];//10 character should be enough to store input
         fgets(choice, 10, stdin);
@@ -459,25 +490,19 @@ int main() {
     //display_grid(grid);
     random_generation(grid);
     random_generation(grid);
-    printf("Manual:\n");
-    printf("move up the grid, press w. ");
-    printf("move right the grid, press d. ");
-    printf("move left the grid, press a. ");
-    printf("move down the grid, press s.\n");
-    printf("Only same numbers can add up.");
-    printf("2048 is a victory!\n");
-    
-
-    play(win,flag,rounds,score,grid);
-
-    free_grid(grid, DIM);
-
+    int play_check = manual();
+    if (play_check){
+        play(win, flag, rounds, score, grid);
+        free_grid(grid, DIM);
+    }
+    else{
+        printf("See you next time!\n");
+    }
     
     printf("A STRANGE GAME.\n");
     printf("THE ONLY WINNING MOVE IS NOT TO PLAY.\n");
 
     
-
 }
 
 
